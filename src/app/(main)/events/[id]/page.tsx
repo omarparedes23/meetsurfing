@@ -14,15 +14,15 @@ export default async function EventDetailPage({ params }: Props) {
   if (!user) redirect('/login')
 
   const [{ data: event }, { data: currentUser }] = await Promise.all([
-    supabase.from('events').select('*').eq('id', id).single(),
-    supabase.from('users').select('*').eq('id', user.id).single(),
+    supabase.from('cs_events').select('*').eq('id', id).single(),
+    supabase.from('cs_users').select('*').eq('id', user.id).single(),
   ])
 
   if (!event) notFound()
 
   // Check/create participation
   const { data: participant } = await supabase
-    .from('event_participants')
+    .from('cs_event_participants')
     .select('*')
     .eq('event_id', id)
     .eq('user_id', user.id)

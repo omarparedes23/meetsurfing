@@ -70,6 +70,8 @@ export interface NearbyEvent extends Omit<Event, 'creator_id'> {
   creator_username: string
   creator_avatar_url: string | null
   creator_avg_rating: number
+  lat?: number
+  lng?: number
 }
 
 export interface EventParticipant {

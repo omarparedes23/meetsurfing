@@ -26,20 +26,23 @@ export function EventDetailClient({ event: initialEvent, currentUser, isParticip
     setJoining(true)
     const supabase = createClient()
 
-    const { error } = await supabase.from('event_participants').upsert({
+    const { error } = await supabase.from('cs_event_participants').upsert({
       event_id: event.id,
       user_id: currentUser.id,
       status: 'joined',
     })
 
-    if (!error) setIsParticipant(true)
+    if (!error) {
+      setIsParticipant(true)
+      setTab('chat') // Go directly to chat after joining
+    }
     setJoining(false)
   }
 
   const handleLeave = async () => {
     const supabase = createClient()
     await supabase
-      .from('event_participants')
+      .from('cs_event_participants')
       .update({ status: 'left', left_at: new Date().toISOString() })
       .eq('event_id', event.id)
       .eq('user_id', currentUser.id)

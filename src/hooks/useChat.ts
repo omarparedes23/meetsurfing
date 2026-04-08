@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { Message, Event, User } from '@/lib/supabase/types'
+import type { Message, MessagePhoto, Event, User } from '@/lib/supabase/types'
 
 export function useChat(event: Event | null) {
   const [messages, setMessages] = useState<Message[]>([])
@@ -15,14 +15,14 @@ export function useChat(event: Event | null) {
   const enrichMessage = useCallback(async (msg: Message): Promise<Message> => {
     // Fetch sender info
     const { data: sender } = await supabase
-      .from('users')
+      .from('cs_users')
       .select('*')
       .eq('id', msg.sender_id)
       .single()
 
     if (msg.type === 'image') {
       const { data: photo } = await supabase
-        .from('message_photos')
+        .from('cs_message_photos')
         .select('*')
         .eq('message_id', msg.id)
         .eq('is_deleted', false)
@@ -38,7 +38,7 @@ export function useChat(event: Event | null) {
 
     setLoading(true)
     const { data, error } = await supabase
-      .from('messages')
+      .from('cs_messages')
       .select('*')
       .eq('event_id', event.id)
       .eq('is_deleted', false)
@@ -65,7 +65,7 @@ export function useChat(event: Event | null) {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
+          table: 'cs_messages',
           filter: `event_id=eq.${event.id}`,
         },
         async (payload) => {
@@ -76,6 +76,22 @@ export function useChat(event: Event | null) {
             if (prev.find(m => m.id === enriched.id)) return prev
             return [...prev, enriched]
           })
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'cs_message_photos',
+          filter: `event_id=eq.${event.id}`,
+        },
+        (payload) => {
+          const photo = payload.new as MessagePhoto
+          // Patch the message that was waiting for its photo
+          setMessages(prev => prev.map(m =>
+            m.id === photo.message_id ? { ...m, photo } : m
+          ))
         }
       )
       .on('presence', { event: 'sync' }, () => {
@@ -107,7 +123,7 @@ export function useChat(event: Event | null) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setSending(false); return false }
 
-    const { error } = await supabase.from('messages').insert({
+    const { error } = await supabase.from('cs_messages').insert({
       event_id: event.id,
       sender_id: user.id,
       type: 'text',
@@ -131,7 +147,7 @@ export function useChat(event: Event | null) {
 
     // Insert message first
     const { data: message, error: msgError } = await supabase
-      .from('messages')
+      .from('cs_messages')
       .insert({
         event_id: event.id,
         sender_id: user.id,
@@ -144,7 +160,7 @@ export function useChat(event: Event | null) {
     if (msgError || !message) return false
 
     // Insert photo record
-    const { error: photoError } = await supabase.from('message_photos').insert({
+    const { error: photoError } = await supabase.from('cs_message_photos').insert({
       message_id: message.id,
       event_id: event.id,
       uploader_id: user.id,

@@ -42,7 +42,7 @@ export function useLocation() {
           const { data: { user } } = await supabase.auth.getUser()
           if (user) {
             await supabase
-              .from('users')
+              .from('cs_users')
               .update({
                 location: `POINT(${coords.lng} ${coords.lat})`,
                 location_updated_at: new Date().toISOString(),

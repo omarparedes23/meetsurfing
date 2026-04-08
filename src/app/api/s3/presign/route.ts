@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   // Verify user is participant of the event
   const { data: participant } = await supabase
-    .from('event_participants')
+    .from('cs_event_participants')
     .select('id')
     .eq('event_id', eventId)
     .eq('user_id', user.id)

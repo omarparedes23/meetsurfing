@@ -27,5 +27,8 @@ export async function uploadToS3(
     headers: { 'Content-Type': file.type },
   })
 
-  if (!res.ok) throw new Error('Failed to upload to S3')
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(`S3 upload failed: ${res.status} ${res.statusText} — ${text}`)
+  }
 }

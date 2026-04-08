@@ -23,7 +23,7 @@ export default function EditProfilePage() {
       if (!user) { router.push('/login'); return }
 
       const { data: profile } = await supabase
-        .from('users').select('*').eq('id', user.id).single()
+        .from('cs_users').select('*').eq('id', user.id).single()
 
       if (profile) {
         setForm({
@@ -56,7 +56,7 @@ export default function EditProfilePage() {
       .map(l => l.trim())
       .filter(Boolean)
 
-    const { error: updateError } = await supabase.from('users').update({
+    const { error: updateError } = await supabase.from('cs_users').update({
       full_name: form.full_name || null,
       bio: form.bio || null,
       age: form.age ? parseInt(form.age) : null,

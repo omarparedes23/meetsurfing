@@ -19,15 +19,34 @@ export default function LoginPage() {
     setError(null)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    
+    // Sign in
+    const { error: signInError, data: signInData } = await supabase.auth.signInWithPassword({ 
+      email, 
+      password 
+    })
 
-    if (error) {
-      setError(error.message)
+    if (signInError) {
+      setError(signInError.message)
       setLoading(false)
-    } else {
-      router.push('/')
-      router.refresh()
+      return
     }
+
+    // Check if user has a profile
+    const { data: profile, error: profileError } = await supabase
+      .from('cs_users')
+      .select('id')
+      .eq('id', signInData.user.id)
+      .single()
+
+    if (profileError || !profile) {
+      // No profile exists, redirect to complete profile
+      router.push('/complete-profile')
+    } else {
+      // Profile exists, go to home
+      router.push('/')
+    }
+    router.refresh()
   }
 
   return (

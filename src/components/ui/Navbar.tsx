@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Home, Plus, User, LogOut } from 'lucide-react'
+import { Home, Plus, User, LogOut, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface NavbarProps {
@@ -24,6 +24,7 @@ export function Navbar({ userId }: NavbarProps) {
   const navItems = [
     { href: '/', icon: Home, label: 'Home' },
     { href: '/events/new', icon: Plus, label: 'New' },
+    { href: '/my-events', icon: MessageCircle, label: 'My' },
     { href: `/profile/${userId}`, icon: User, label: 'Profile' },
   ]
 

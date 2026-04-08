@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { error } = await supabase.from('users').insert({
+  const { error } = await supabase.from('cs_users').insert({
     id: userId,
     username: username.toLowerCase().trim(),
     full_name: full_name || null,

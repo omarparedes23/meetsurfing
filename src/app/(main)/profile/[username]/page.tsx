@@ -16,7 +16,7 @@ export default async function ProfilePage({ params }: Props) {
   const { data: { user: authUser } } = await supabase.auth.getUser()
 
   const { data: profile } = await supabase
-    .from('users')
+    .from('cs_users')
     .select('*')
     .eq('username', username)
     .single()

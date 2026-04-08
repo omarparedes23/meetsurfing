@@ -48,8 +48,8 @@ export default function HomePage() {
         </button>
         <div className="flex items-center gap-2">
           {coords && (
-            <span className="text-xs text-gray-400 flex items-center gap-1">
-              <MapPin className="w-3 h-3" /> Location active
+            <span className="text-xs text-gray-400 flex items-center gap-1" title="Click refresh to reload events">
+              <MapPin className="w-3 h-3" /> {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
             </span>
           )}
           <button
