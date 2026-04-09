@@ -21,7 +21,7 @@ export function EventForm({ userCoords }: EventFormProps) {
     description: '',
     category: 'bar' as EventCategory,
     location_name: '',
-    max_participants: 8,
+    max_participants: 20,
   })
 
   const handleChange = (
