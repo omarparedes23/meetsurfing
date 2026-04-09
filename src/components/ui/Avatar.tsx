@@ -15,7 +15,7 @@ export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
   return (
     <div className={cn('rounded-full overflow-hidden bg-gray-200 shrink-0 flex items-center justify-center font-semibold text-gray-600', sizes[size], className)}>
       {src ? (
-        <Image src={src} alt={name} width={px[size]} height={px[size]} className="object-cover" />
+        <Image src={src} alt={name} width={px[size]} height={px[size]} className="object-cover" unoptimized />
       ) : (
         name[0]?.toUpperCase()
       )}
