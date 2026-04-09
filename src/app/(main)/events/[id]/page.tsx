@@ -29,12 +29,14 @@ export default async function EventDetailPage({ params }: Props) {
     .single()
 
   const isParticipant = participant?.status === 'joined'
+  const participantStatus = participant?.status ?? null
 
   return (
     <EventDetailClient
       event={event}
       currentUser={currentUser}
       isParticipant={isParticipant}
+      participantStatus={participantStatus}
     />
   )
 }
