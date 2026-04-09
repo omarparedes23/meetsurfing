@@ -34,6 +34,7 @@ export default function MyEventsPage() {
       .from('cs_events')
       .select('*')
       .eq('creator_id', user.id)
+      .neq('status', 'expired')
       .order('created_at', { ascending: false })
 
     // Fetch events user joined
@@ -50,7 +51,8 @@ export default function MyEventsPage() {
         .from('cs_events')
         .select('*')
         .in('id', eventIds)
-        .neq('creator_id', user.id) // Exclude events created by user
+        .neq('creator_id', user.id)
+        .neq('status', 'expired')
         .order('starts_at', { ascending: true })
       
       joined = events || []
