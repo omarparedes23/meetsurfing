@@ -25,7 +25,7 @@ export function Navbar({ userId }: NavbarProps) {
     { href: '/', icon: Home, label: 'Home' },
     { href: '/events/new', icon: Plus, label: 'New' },
     { href: '/my-events', icon: MessageCircle, label: 'My' },
-    { href: `/profile/${userId}`, icon: User, label: 'Profile' },
+    { href: '/profile', icon: User, label: 'Profile' },
   ]
 
   return (

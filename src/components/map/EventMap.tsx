@@ -14,6 +14,16 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 })
 
+// Remove Ukrainian flag emoji added in Leaflet 1.9.3+
+L.Map.addInitHook(function (this: L.Map) {
+  const attribution = this.attributionControl
+  if (attribution) {
+    attribution.setPrefix(
+      '<a href="https://leafletjs.com" title="A JavaScript library for interactive maps">Leaflet</a>'
+    )
+  }
+})
+
 interface EventMapProps {
   events: NearbyEvent[]
   userCoords: Coordinates | null

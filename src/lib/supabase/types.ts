@@ -35,6 +35,7 @@ export interface User {
   is_banned: boolean
   avg_rating: number
   total_reviews: number
+  interests: string | null
   created_at: string
   updated_at: string
 }
