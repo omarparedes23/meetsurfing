@@ -37,6 +37,32 @@ export function EventDetailClient({ event: initialEvent, currentUser, isParticip
   const isCreator = event.creator_id === currentUser.id
   const isFull = event.current_participants >= event.max_participants && !isParticipant
 
+  // Requester: watch own participant record for approval
+  useEffect(() => {
+    if (isCreator || participantStatus !== 'pending') return
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`my-request-${event.id}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'cs_event_participants',
+        filter: `event_id=eq.${event.id}`,
+      }, (payload) => {
+        if (payload.new.user_id !== currentUser.id) return
+        if (payload.new.status === 'joined') {
+          setIsParticipant(true)
+          setParticipantStatus('joined')
+          setTab('chat')
+        } else if (payload.new.status === 'left') {
+          setParticipantStatus(null)
+        }
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [isCreator, participantStatus, event.id, currentUser.id])
+
+  // Creator: watch pending requests
   useEffect(() => {
     if (!isCreator) return
     fetchPendingRequests()
